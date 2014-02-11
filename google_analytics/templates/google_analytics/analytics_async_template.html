@@ -1,6 +1,7 @@
 <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', '{{ analytics_code }}']);
+    {% if analytics_domain %}_gaq.push(['_setDomainName', '{{ analytics_domain }}']);{% endif %}
     _gaq.push(['_trackPageview']);
 
     {% if track_page_load_time %}

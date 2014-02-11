@@ -40,23 +40,24 @@ class AnalyticsNode(template.Node):
     def render(self, context):
         content = ''
         if self.site:
-            code_set = self.site.analytics_set.all()
-            if code_set:
-                code = code_set[0].analytics_code
-            else:
+            code = self.site.analytics
+            if not code:
                 return ''
         elif self.code:
-            code = self.code
+            code = type('Code', (object,), {
+                'analytics_code': self.code,
+                'analytics_domain': '',
+                'track_page_load': False
+            })()
         else:
             return ''
         
-        if code.strip() != '':
+        if code.analytics_code.strip() != '':
             t = loader.get_template(self.template_name)
             c = Context({
-                'analytics_code': code,
-                'track_page_load_time': getattr(settings,
-                                                "GOOGLE_ANALYTICS_TRACK_PAGE_LOAD_TIME",
-                                                False),
+                'analytics_code': code.analytics_code,
+                'analytics_domain': code.analytics_domain,
+                'track_page_load_time': code.track_page_load,
             })
             return t.render(c)
         else:
