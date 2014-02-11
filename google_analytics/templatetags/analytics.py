@@ -1,13 +1,12 @@
 from django import template
 from django.conf import settings
-from django.db import models
+from ..models import Analytics
 from django.contrib.sites.models import Site
 
 from django.template import Context, loader
 
 
 register = template.Library()
-Analytics = models.get_model('googleanalytics', 'analytics')
 
 def do_get_analytics(parser, token):
     contents = token.split_contents()
@@ -40,8 +39,11 @@ class AnalyticsNode(template.Node):
     def render(self, context):
         content = ''
         if self.site:
-            code = self.site.analytics
-            if not code:
+            try:
+                code = self.site.analytics
+            except Analytics.DoesNotExist:
+                return ''
+            else:
                 return ''
         elif self.code:
             code = type('Code', (object,), {
