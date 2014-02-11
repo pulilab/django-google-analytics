@@ -21,6 +21,9 @@ def do_get_analytics(parser, token):
         raise template.TemplateSyntaxError, "%r cannot take more than one argument" % tag_name
    
     if not code:
+        import ipdb;
+
+        ipdb.set_trace()
         current_site = Site.objects.get_current()
     else:
         if not (code[0] == code[-1] and code[0] in ('"', "'")):
@@ -38,13 +41,15 @@ class AnalyticsNode(template.Node):
         
     def render(self, context):
         content = ''
+        import ipdb;
+
+        ipdb.set_trace()
         if self.site:
             try:
                 code = self.site.analytics
             except Analytics.DoesNotExist:
                 return ''
-            else:
-                return ''
+
         elif self.code:
             code = type('Code', (object,), {
                 'analytics_code': self.code,
